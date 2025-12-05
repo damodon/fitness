@@ -277,8 +277,12 @@
         }
 
         // Function to open Image
-        function openImage(imageUrl) {
-            modalBody.innerHTML = `<img src="${imageUrl}" alt="Exercise Guide">`;
+        function openImage(imageUrl, notes) {
+            let content = `<img src="${imageUrl}" alt="Exercise Guide">`;
+            if (notes) {
+                content += `<div style="color: white; margin-top: 15px; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px; text-align: left; max-width: 800px;">${notes}</div>`;
+            }
+            modalBody.innerHTML = content;
             modal.style.display = 'flex';
         }
 
@@ -297,6 +301,106 @@
 
         // --- 3. Content Definitions ---
         
+        // Monday Content (Push Day)
+        const mondayContent = `
+            <table class="workout-table">
+                <thead>
+                    <tr>
+                        <th width="50%">Exercise</th>
+                        <th width="25%">Sets</th>
+                        <th width="25%">Reps</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <span class="exercise-link" onclick="openImage('https://focusedonfit.com/s/uploads/2014/01/Dumbbell-Bench-Press.jpg', 'Keep your back flat on the bench, feet planted firmly on the ground. Lower the dumbbells with control until they are level with your chest, then press back up. Focus on a full range of motion.')">Dumbbell Bench Press</span>
+                        </td>
+                        <td>3</td>
+                        <td>8-12</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="exercise-link" onclick="openImage('https://training.fit/wp-content/uploads/2020/03/military-press-kurzhantel.png', 'Start with dumbbells at shoulder height, palms facing forward. Press overhead until arms are fully extended but not locked. Lower with control back to starting position. Keep your core engaged throughout.')">Overhead Press</span>
+                        </td>
+                        <td>3</td>
+                        <td>8-12</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="exercise-link" onclick="openImage('https://focusedonfit.com/s/uploads/2014/01/Dumbell-Flys.jpg', 'Set bench to 30-45 degree incline. Start with arms extended above chest, slight bend in elbows. Lower dumbbells out to sides in an arc motion until you feel a stretch in your chest. Bring back together at the top.')">Incline Dumbbell Flyes</span>
+                        </td>
+                        <td>3</td>
+                        <td>10-15</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="exercise-link" onclick="openImage('https://focusedonfit.com/s/uploads/2014/01/Triceps-Kickback.jpg', 'Hold one dumbbell with both hands behind your head. Keep elbows close to your head and pointed upward. Extend arms overhead by straightening elbows, then lower back down with control. Only your forearms should move.')">Overhead Tricep Extension</span>
+                        </td>
+                        <td>3</td>
+                        <td>10-15</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="exercise-link" onclick="openImage('https://www.inspireusafoundation.org/wp-content/uploads/2022/02/dumbbell-lateral-raise.gif', 'Stand with dumbbells at your sides. Raise arms out to the sides until parallel with the ground, leading with your elbows. Keep a slight bend in your elbows throughout. Lower with control.')">Lateral Raises</span>
+                        </td>
+                        <td>3</td>
+                        <td>12-15</td>
+                    </tr>
+                </tbody>
+            </table>
+        `;
+
+        // Wednesday Content (Pull Day)
+        const wednesdayContent = `
+            <table class="workout-table">
+                <thead>
+                    <tr>
+                        <th width="50%">Exercise</th>
+                        <th width="25%">Sets</th>
+                        <th width="25%">Reps</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <span class="exercise-link" onclick="openImage('https://focusedonfit.com/s/uploads/2014/01/Bent-Over-Row2.jpg', 'Bend forward at hips with back straight, dumbbells hanging down. Pull dumbbells up to your sides, leading with elbows. Squeeze shoulder blades together at the top. Lower with control.')">Dumbbell Rows</span>
+                        </td>
+                        <td>3</td>
+                        <td>8-12</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="exercise-link" onclick="openImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXHbxREuL0yqSvPr8st6kt-oWfgHTJBord_Q&s', 'Bend forward at hips, dumbbells hanging down. Raise arms out to sides in a reverse fly motion, squeezing shoulder blades together. Keep slight bend in elbows throughout. Lower with control.')">Reverse Flyes</span>
+                        </td>
+                        <td>3</td>
+                        <td>10-15</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="exercise-link" onclick="openImage('https://training.fit/wp-content/uploads/2020/03/shrugs-kurzhantel.png', 'Stand with dumbbells at your sides. Shrug shoulders straight up toward your ears as high as possible. Hold briefly at the top, then lower with control. Keep arms straight throughout - this is a shoulder movement only.')">Dumbbell Shrugs</span>
+                        </td>
+                        <td>3</td>
+                        <td>12-15</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="exercise-link" onclick="openImage('https://training.fit/wp-content/uploads/2020/03/bizeps-curls-kurzhantel-sitzend.png', 'Sit or stand with dumbbells at your sides, palms facing forward. Curl weights up toward shoulders, keeping elbows stationary at your sides. Squeeze biceps at the top, then lower with control. No swinging or momentum.')">Dumbbell Bicep Curls</span>
+                        </td>
+                        <td>3</td>
+                        <td>10-15</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="exercise-link" onclick="openImage('https://training.fit/wp-content/uploads/2022/07/hammer-curls-kurzhantel.png', 'Hold dumbbells with palms facing each other (neutral grip). Curl weights up toward shoulders, keeping palms facing inward throughout. Keep elbows stationary. Lower with control.')">Hammer Curls</span>
+                        </td>
+                        <td>3</td>
+                        <td>10-15</td>
+                    </tr>
+                </tbody>
+            </table>
+        `;
+        
         // Friday Content
         const fridayContent = `
             <table class="workout-table">
@@ -310,19 +414,28 @@
                 <tbody>
                     <tr>
                         <td>
-                            <span class="exercise-link" onclick="openImage('https://training.fit/wp-content/uploads/2020/03/kreuzheben-gestreckte-beine-kurzhantel.png')">Romanian Deadlift</span>
+                            <span class="exercise-link" onclick="openImage('https://sportscienceinsider.com/wp-content/uploads/2023/05/How-To-DB-Deadlift-2048x1024.png', 'Stand with feet hip-width apart, dumbbells in front of thighs. Keep back straight and knees slightly bent. Hinge at hips, lowering dumbbells down your legs until you feel a stretch in your hamstrings. Drive through heels to return to standing.')">Romanian Deadlift</span>
                         </td>
                         <td>2</td>
                         <td>10-12</td>
                     </tr>
                     <tr>
-                        <td>Glute Bridge</td>
+                        <td>
+                            <span class="exercise-link" onclick="openImage('https://www.inspireusafoundation.org/wp-content/uploads/2022/09/bodyweight-squat.gif', 'Stand with feet shoulder-width apart. Lower your body by bending knees and hips, as if sitting back into a chair. Keep chest up and weight in your heels. Go as low as comfortable, then push through heels to stand.')">Bodyweight Squat</span>
+                        </td>
+                        <td>3</td>
+                        <td>10-12</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="exercise-link" onclick="openImage('https://www.inspireusafoundation.org/wp-content/uploads/2022/01/glute-bridge.gif', 'Lie on back with knees bent, feet flat on floor. Push through heels to lift hips up until body forms a straight line from shoulders to knees. Squeeze glutes at the top, then lower with control.')">Glute Bridge</span>
+                        </td>
                         <td>3</td>
                         <td>12-15</td>
                     </tr>
                     <tr>
                         <td>
-                            <span class="exercise-link" onclick="openImage('https://geeksonfeet.com/img/workouts/calfraises_hu70808923bf27faf24ab2eb790fa98c30_40649_1200x0_resize_q100_h2_box.webp')">Calf Raises</span>
+                            <span class="exercise-link" onclick="openImage('https://geeksonfeet.com/img/workouts/calfraises_hu70808923bf27faf24ab2eb790fa98c30_40649_1200x0_resize_q100_h2_box.webp', 'Stand with balls of feet on an elevated surface, heels hanging off. Rise up onto toes as high as possible, squeezing calves at the top. Lower heels below the platform for a full stretch. Can be done with or without weights.')">Calf Raises</span>
                         </td>
                         <td>3</td>
                         <td>15</td>
@@ -349,14 +462,14 @@
                     mainHeaderText = "Resistance Plan";
                     headerClass = "type-resistance";
                     wittyTaglineText = "Push it";
-                    selectedContent = resistancePlaceholder;
+                    selectedContent = mondayContent;
                     break;
 
                 case 3: // Wednesday
                     mainHeaderText = "Resistance Plan";
                     headerClass = "type-resistance";
                     wittyTaglineText = "Pull it";
-                    selectedContent = resistancePlaceholder;
+                    selectedContent = wednesdayContent;
                     break;
 
                 case 5: // Friday
