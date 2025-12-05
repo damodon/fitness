@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    
+    <!-- iOS Web App Configuration -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Exercise Plan">
+    
+    <title>Daily Exercise Plan</title>
+    <style>
+        /* --- Basic page styling --- */
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding-top: 20px;
+        }
+
+        /* --- Date Picker Styling --- */
+        .date-selector-container {
+            position: relative;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #666;
+            z-index: 100;
+        }
+
+        #day-toggle {
+            cursor: pointer;
+            padding: 5px 10px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            font-weight: bold;
+            user-select: none;
+        }
+        #day-toggle:hover { background: #d0d0d0; }
+
+        #day-list-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            border-radius: 8px;
+            padding: 5px 0;
+            margin-top: 8px;
+            list-style: none;
+            width: 120px;
+        }
+
+        #day-list-dropdown.show { display: block; }
+
+        .day-option {
+            padding: 8px 15px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .day-option:hover { background-color: #f0f0f0; color: #000; }
+
+        /* --- Main card styling --- */
+        .plan-card {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            z-index: 1; 
+        }
+
+        h1 {
+            margin-bottom: 0.5rem;
+            font-size: 2.5rem;
+            color: #2c3e50; 
+        }
+        
+        h2#witty-tagline {
+            color: #7f8c8d;
+            font-weight: normal;
+            font-style: italic;
+            margin-top: 0;
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+        }
+
+        /* Header Colors */
+        h1.type-resistance { color: #d35400; }
+        h1.type-cycling { color: #2980b9; }
+        h1.type-rest { color: #27ae60; }
+
+        /* --- Table Styling --- */
+        .workout-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            text-align: left;
+        }
+
+        .workout-table th {
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            color: #999;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .workout-table td {
+            padding: 15px 5px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 1.1rem;
+        }
+
+        .workout-table th:not(:first-child),
+        .workout-table td:not(:first-child) {
+            text-align: center;
+        }
+
+        .workout-table td:first-child {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        /* Interactive links in table */
+        .exercise-link {
+            color: #2980b9;
+            text-decoration: none;
+            border-bottom: 1px dashed #2980b9;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .exercise-link:hover {
+            color: #d35400;
+            border-bottom-style: solid;
+        }
+
+        /* --- Modal Styling --- */
+        .modal-overlay {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85); /* Dark background */
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-content {
+            background: #000;
+            padding: 10px;
+            border-radius: 8px;
+            position: relative;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Close Button */
+        .close-btn {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        .close-btn:hover { color: #ccc; }
+
+        /* Responsive Media */
+        .modal-content iframe, 
+        .modal-content img {
+            width: 100%;
+            max-height: 80vh;
+            border-radius: 4px;
+        }
+        .modal-content iframe {
+            aspect-ratio: 16 / 9;
+            height: auto;
+        }
+        .modal-content img {
+            object-fit: contain;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Placeholder content box */
+        .content-placeholder {
+            background-color: #ecf0f1;
+            padding: 30px;
+            border-radius: 8px;
+            border: 3px dashed #bdc3c7;
+            font-size: 1.1rem;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="date-selector-container">
+        Currently viewing: 
+        <span id="day-toggle">Loading...</span>
+        <ul id="day-list-dropdown">
+            <li class="day-option" data-idx="1">Monday</li>
+            <li class="day-option" data-idx="2">Tuesday</li>
+            <li class="day-option" data-idx="3">Wednesday</li>
+            <li class="day-option" data-idx="4">Thursday</li>
+            <li class="day-option" data-idx="5">Friday</li>
+            <li class="day-option" data-idx="6">Saturday</li>
+            <li class="day-option" data-idx="0">Sunday</li>
+        </ul>
+    </div>
+
+    <div class="plan-card">
+        <h1 id="main-header">Loading...</h1>
+        <h2 id="witty-tagline">Loading...</h2>
+        <div id="plan-content"></div>
+    </div>
+
+    <div id="media-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+            <div id="modal-body">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. Setup ---
+        const dayToggleBtn = document.getElementById('day-toggle');
+        const dropdownList = document.getElementById('day-list-dropdown');
+        const dayOptions = document.querySelectorAll('.day-option');
+        const realTodayIndex = new Date().getDay();
+        const dayNamesByIdx = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+        // --- 2. Modal Logic ---
+        const modal = document.getElementById('media-modal');
+        const modalBody = document.getElementById('modal-body');
+
+        // Function to open YouTube Video
+        function openVideo(videoId) {
+            const embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`;
+            const watchUrl = `https://www.youtube.com/watch?v=${videoId}`;
+            
+            modalBody.innerHTML = `
+                <div style="text-align: center; width: 100%;">
+                    <iframe src="${embedUrl}" title="Exercise Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <br>
+                    <a href="${watchUrl}" target="_blank" style="display: inline-block; margin-top: 15px; color: white; text-decoration: underline;">
+                        Video not loading? Watch on YouTube
+                    </a>
+                </div>`;
+            modal.style.display = 'flex';
+        }
+
+        // Function to open Image
+        function openImage(imageUrl) {
+            modalBody.innerHTML = `<img src="${imageUrl}" alt="Exercise Guide">`;
+            modal.style.display = 'flex';
+        }
+
+        // Function to close Modal
+        function closeModal() {
+            modal.style.display = 'none';
+            modalBody.innerHTML = '';
+        }
+
+        // Close modal when clicking outside content
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // --- 3. Content Definitions ---
+        
+        // Friday Content
+        const fridayContent = `
+            <table class="workout-table">
+                <thead>
+                    <tr>
+                        <th width="50%">Exercise</th>
+                        <th width="25%">Sets</th>
+                        <th width="25%">Reps</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <span class="exercise-link" onclick="openImage('https://training.fit/wp-content/uploads/2020/03/kreuzheben-gestreckte-beine-kurzhantel.png')">Romanian Deadlift</span>
+                        </td>
+                        <td>2</td>
+                        <td>10-12</td>
+                    </tr>
+                    <tr>
+                        <td>Glute Bridge</td>
+                        <td>3</td>
+                        <td>12-15</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="exercise-link" onclick="openImage('https://geeksonfeet.com/img/workouts/calfraises_hu70808923bf27faf24ab2eb790fa98c30_40649_1200x0_resize_q100_h2_box.webp')">Calf Raises</span>
+                        </td>
+                        <td>3</td>
+                        <td>15</td>
+                    </tr>
+                </tbody>
+            </table>
+        `;
+
+        const resistancePlaceholder = `<div class="content-placeholder">[Resistance Exercises Will Go Here]</div>`;
+        const cyclingPlaceholder = `<div class="content-placeholder">[Cycling Workout Will Go Here]</div>`;
+        const restPlaceholder = `<div class="content-placeholder">[Rest & Recovery Details]</div>`;
+
+        // --- 4. Rendering Logic ---
+        function renderPlanForDay(selectedDayIndex) {
+            selectedDayIndex = parseInt(selectedDayIndex);
+
+            let mainHeaderText = "";
+            let wittyTaglineText = "";
+            let selectedContent = "";
+            let headerClass = "";
+
+            switch (selectedDayIndex) {
+                case 1: // Monday
+                    mainHeaderText = "Resistance Plan";
+                    headerClass = "type-resistance";
+                    wittyTaglineText = "Push it";
+                    selectedContent = resistancePlaceholder;
+                    break;
+
+                case 3: // Wednesday
+                    mainHeaderText = "Resistance Plan";
+                    headerClass = "type-resistance";
+                    wittyTaglineText = "Pull it";
+                    selectedContent = resistancePlaceholder;
+                    break;
+
+                case 5: // Friday
+                    mainHeaderText = "Resistance Plan";
+                    headerClass = "type-resistance";
+                    wittyTaglineText = "Oh no! Legs day!";
+                    selectedContent = fridayContent; 
+                    break;
+                    
+                case 2: // Tuesday
+                case 4: // Thursday
+                case 6: // Saturday
+                    mainHeaderText = "Cycling Session";
+                    headerClass = "type-cycling";
+                    wittyTaglineText = "Time to hit the pedals"; 
+                    selectedContent = cyclingPlaceholder;
+                    break;
+                    
+                case 0: // Sunday
+                    mainHeaderText = "Rest Day";
+                    headerClass = "type-rest";
+                    wittyTaglineText = "Relax and recover";
+                    selectedContent = restPlaceholder;
+                    break;
+            }
+
+            const mainHeaderEl = document.getElementById('main-header');
+            mainHeaderEl.textContent = mainHeaderText;
+            mainHeaderEl.className = headerClass;
+            document.getElementById('witty-tagline').textContent = wittyTaglineText;
+            document.getElementById('plan-content').innerHTML = selectedContent;
+            dayToggleBtn.textContent = dayNamesByIdx[selectedDayIndex];
+        }
+
+        // --- 5. Event Listeners ---
+        dayToggleBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdownList.classList.toggle('show');
+        });
+
+        dayOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                const chosenIndex = this.getAttribute('data-idx');
+                renderPlanForDay(chosenIndex);
+                dropdownList.classList.remove('show');
+            });
+        });
+
+        document.body.addEventListener('click', function(e) {
+             if (!e.target.closest('.modal-content') && !e.target.closest('#day-toggle')) {
+                 dropdownList.classList.remove('show');
+             }
+        });
+
+        // --- 6. Initial Render ---
+        renderPlanForDay(realTodayIndex);
+
+    </script>
+</body>
+</html>
